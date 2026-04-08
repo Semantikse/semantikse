@@ -1,26 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  --color-orange-50: rgb(254 243 238);
+  --color-orange-100: rgb(253 228 215);
+  --color-orange-200: rgb(250 198 174);
+  --color-orange-300: rgb(246 158 123);
+  --color-orange-400: rgb(242 108 69);
+  --color-orange-500: rgb(238 70 32);
+  --color-orange-600: rgb(223 46 23);
+  --color-orange-700: rgb(185 32 21);
+  --color-orange-800: rgb(147 28 25);
+  --color-orange-900: rgb(119 26 23);
+  --color-orange-950: rgb(64 10 10);
+  --color-yellow-50: rgb(254 249 236);
+  --color-yellow-100: rgb(252 237 201);
+  --color-yellow-200: rgb(249 217 142);
+  --color-yellow-300: rgb(245 194 84);
+  --color-yellow-400: rgb(244 169 64);
+  --color-yellow-500: rgb(236 137 20);
+  --color-yellow-600: rgb(209 101 14);
+  --color-yellow-700: rgb(174 70 15);
+  --color-yellow-800: rgb(141 54 19);
+  --color-yellow-900: rgb(116 45 19);
+  --color-yellow-950: rgb(67 21 5);
 }
