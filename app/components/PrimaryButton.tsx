@@ -12,8 +12,8 @@ export const PrimaryButton = forwardRef<HTMLButtonElement, PrimaryButtonProps>(
       <button
         ref={ref}
         className={cn(
-          "h-10 px-4 py-2 flex items-center",
-          "rounded outline-none focus:ring ring-offset-2 focus:ring-orange-500",
+          "h-10 px-4 py-2 flex gap-1 items-center",
+          "rounded outline-none focus:ring focus:ring-offset-2 focus:ring-orange-500",
           "font-medium text-base font-newake uppercase",
           "transition-colors -skew-x-10",
           "bg-orange-500 outline-orange-500 text-orange-50",

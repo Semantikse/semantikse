@@ -14,8 +14,8 @@ export const TertiaryButton = forwardRef<
     <button
       ref={ref}
       className={cn(
-        "h-10 px-4 py-2 flex items-center",
-        "rounded outline-2 -outline-offset-2 focus:ring ring-offset-2 focus:ring-orange-500",
+        "h-10 px-4 py-2 flex gap-1 items-center",
+        "rounded outline-2 -outline-offset-2 focus:ring focus:ring-offset-2 focus:ring-orange-500",
         "font-medium text-base font-newake uppercase",
         "transition-colors -skew-x-10 ",
         "bg-orange-50 outline-orange-200  text-orange-500",
