@@ -4,12 +4,12 @@ import { cn } from "@/app/utils/cn";
 import { UserGroupIcon } from "@heroicons/react/20/solid";
 import { HTMLAttributes, forwardRef } from "react";
 
-interface WinnersCountIndicatorProps extends HTMLAttributes<HTMLDivElement> {
+interface WinnerCountIndicatorProps extends HTMLAttributes<HTMLDivElement> {
   count: number;
 }
-export const WinnersCountIndicator = forwardRef<
+export const WinnerCountIndicator = forwardRef<
   HTMLDivElement,
-  WinnersCountIndicatorProps
+  WinnerCountIndicatorProps
 >(({ className, count, ...props }, ref) => {
   const formattedCount = count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 
@@ -25,4 +25,4 @@ export const WinnersCountIndicator = forwardRef<
   );
 });
 
-WinnersCountIndicator.displayName = "WinnersCountIndicator";
+WinnerCountIndicator.displayName = "WinnerCountIndicator";

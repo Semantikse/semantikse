@@ -1,19 +1,19 @@
 "use client";
 
-import { FlammesCountIndicator } from "@/app/components/atoms/FlammesCountIndicator";
+import { FlammeCountIndicator } from "@/app/components/atoms/FlammeCountIndicator";
 import { TimeLeftIndicator } from "@/app/components/atoms/TimeLeftIndicator";
-import { WinnersCountIndicator } from "@/app/components/atoms/WinnerCountIndicator";
+import { WinnerCountIndicator } from "@/app/components/atoms/WinnerCountIndicator";
 import { cn } from "@/app/utils/cn";
 import { HTMLAttributes, forwardRef } from "react";
 
 interface HeaderProps extends HTMLAttributes<HTMLDivElement> {
-  flammesCount: number;
+  flammeCount: number;
   remainingSeconds: number;
-  winnersCount: number;
+  winnerCount: number;
 }
 export const Header = forwardRef<HTMLDivElement, HeaderProps>(
   (
-    { className, flammesCount, remainingSeconds, winnersCount, ...props },
+    { className, flammeCount, remainingSeconds, winnerCount, ...props },
     ref,
   ) => {
     return (
@@ -25,11 +25,11 @@ export const Header = forwardRef<HTMLDivElement, HeaderProps>(
         {...props}
         ref={ref}
       >
-        <FlammesCountIndicator count={flammesCount} />
+        <FlammeCountIndicator count={flammeCount} />
 
         <TimeLeftIndicator seconds={remainingSeconds} />
 
-        <WinnersCountIndicator count={winnersCount} />
+        <WinnerCountIndicator count={winnerCount} />
       </div>
     );
   },

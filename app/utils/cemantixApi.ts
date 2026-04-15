@@ -74,7 +74,7 @@ export class CemantixApi {
     return response.json();
   }
 
-  public static async getWinnersCount() {
+  public static async getWinnerCount() {
     return (await this.submitWord("example")).v ?? 0;
   }
 }

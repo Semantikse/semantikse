@@ -4,12 +4,12 @@ import { cn } from "@/app/utils/cn";
 import { FireIcon } from "@heroicons/react/20/solid";
 import { HTMLAttributes, forwardRef } from "react";
 
-interface FlammesCountIndicatorProps extends HTMLAttributes<HTMLDivElement> {
+interface FlammeCountIndicatorProps extends HTMLAttributes<HTMLDivElement> {
   count: number;
 }
-export const FlammesCountIndicator = forwardRef<
+export const FlammeCountIndicator = forwardRef<
   HTMLDivElement,
-  FlammesCountIndicatorProps
+  FlammeCountIndicatorProps
 >(({ className, count, ...props }, ref) => {
   return (
     <div
@@ -23,4 +23,4 @@ export const FlammesCountIndicator = forwardRef<
   );
 });
 
-FlammesCountIndicator.displayName = "FlammesCountIndicator";
+FlammeCountIndicator.displayName = "FlammeCountIndicator";
