@@ -1,5 +1,6 @@
 "use client";
 import { BottomBar } from "@/app/components/molecules/BottomBar";
+import { Header } from "@/app/components/molecules/Header";
 import { useState } from "react";
 
 export default function Home() {
@@ -15,6 +16,11 @@ export default function Home() {
 
   return (
     <div className="container mx-auto px-2 ">
+      <Header
+        flammesCount={10}
+        remainingSeconds={18208}
+        winnersCount={375300}
+      />
       <p className="font-newake">Newake</p>
       <p className="font-geist">Geist</p>
 
