@@ -1,9 +1,17 @@
 import type { Metadata } from "next";
+import { Geist } from "next/font/google";
 import localFont from "next/font/local";
+
 import "./globals.css";
 
 const newake = localFont({
   src: "./fonts/Newake-Font-Demo.otf",
+  variable: "--font-newake",
+});
+
+const geist = Geist({
+  variable: "--font-geist",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
@@ -17,7 +25,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className={`${newake.className} h-full antialiased`}>
+    <html
+      lang="fr"
+      className={`${newake.variable} ${geist.variable} h-full antialiased`}
+    >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

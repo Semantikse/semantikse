@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
-:root {
+@theme inline {
+  --font-geist: var(--font-geist);
+  --font-newake: var(--font-newake);
+
   --color-orange-50: rgb(254 243 238);
   --color-orange-100: rgb(253 228 215);
   --color-orange-200: rgb(250 198 174);
