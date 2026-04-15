@@ -1,7 +1,6 @@
 "use client";
 import { BottomBar } from "@/app/components/molecules/BottomBar";
 import { Header } from "@/app/components/molecules/Header";
-import { CemantixApi } from "@/app/utils/cemantixApi";
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -11,10 +10,10 @@ export default function Home() {
   const [winnerCount, setWinnerCount] = useState(0);
 
   useEffect(() => {
-    CemantixApi.getWinnerCount().then((count) => {
-      setWinnerCount(count);
+    fetch("/api/winner-count").then(async (response) => {
+      setWinnerCount(await response.json());
     });
-  });
+  }, []);
 
   const sendWord = () => {
     setStarsCount(starsCount + 50);
