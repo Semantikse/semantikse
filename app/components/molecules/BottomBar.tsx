@@ -32,7 +32,7 @@ export const BottomBar = forwardRef<HTMLDivElement, BottomBarProps>(
   ) => {
     return (
       <div
-        className={cn("flex flex-col gap-2", className)}
+        className={cn("flex flex-col gap-2 py-2", className)}
         {...props}
         ref={ref}
       >

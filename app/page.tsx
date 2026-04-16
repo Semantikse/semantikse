@@ -1,6 +1,7 @@
 "use client";
 import { BottomBar } from "@/app/components/molecules/BottomBar";
 import { Header } from "@/app/components/molecules/Header";
+import { HeroSection } from "@/app/components/molecules/HeroSection";
 import useCountdownToNextWord from "@/app/hooks/useCountdownToNextWord";
 import { useEffect, useState } from "react";
 
@@ -31,8 +32,14 @@ export default function Home() {
         remainingSeconds={remainingSeconds}
         winnerCount={winnerCount}
       />
-      <p className="font-newake">Newake</p>
-      <p className="font-geist">Geist</p>
+
+      <div className="flex-1 flex flex-col justify-center">
+        <HeroSection
+          flammeCount={10}
+          remainingSeconds={remainingSeconds}
+          winnerCount={winnerCount}
+        />
+      </div>
 
       <BottomBar
         word={currentWord}
