@@ -1,10 +1,18 @@
-export interface ScoreResponse {
-  s?: number;
-  p?: number;
-  v?: number;
-  error?: string;
-  [key: string]: any;
-}
+import z from "zod";
+
+export const ScoreResponseSchema = z.object({
+  s: z.number().optional(),
+  p: z.number().optional(),
+  v: z.number().optional(),
+  error: z.string().optional(),
+});
+
+export const WordScoreSchema = z.object({
+  degree: z.number(),
+  percentage: z.number(),
+});
+
+export type WordScore = z.infer<typeof WordScoreSchema>;
 
 export class CemantixApi {
   private static readonly BASE_URL = "https://cemantix.certitudes.org";
@@ -37,7 +45,7 @@ export class CemantixApi {
     return 1505 + diffDays;
   }
 
-  public static async submitWord(word: string): Promise<ScoreResponse> {
+  private static async sendRequest(word: string) {
     const gameNumber = this.getGameNumber();
 
     const sessionResponse = await fetch(this.BASE_URL, {
@@ -71,10 +79,18 @@ export class CemantixApi {
       throw new Error("Erreur HTTP score");
     }
 
-    return response.json();
+    return ScoreResponseSchema.parse(await response.json());
   }
 
-  public static async getWinnerCount() {
-    return (await this.submitWord("example")).v ?? 0;
+  public static async submitWord(word: string): Promise<WordScore> {
+    const response = await this.sendRequest(word);
+    return {
+      degree: (response.s ?? 0) * 100,
+      percentage: (response.p ?? 0) / 10,
+    };
+  }
+
+  public static async getWinnerCount(): Promise<number> {
+    return (await this.sendRequest("example")).v ?? 0;
   }
 }

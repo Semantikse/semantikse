@@ -2,23 +2,23 @@
 import { BottomBar } from "@/app/components/molecules/BottomBar";
 import { Header } from "@/app/components/molecules/Header";
 import { HeroSection } from "@/app/components/molecules/HeroSection";
+import useCemantixApi from "@/app/hooks/useCemantixApi";
 import useCountdownToNextWord from "@/app/hooks/useCountdownToNextWord";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Home() {
   const remainingSeconds = useCountdownToNextWord();
+
+  const { winnerCount, submitWord } = useCemantixApi();
+
   const [currentWord, setCurrentWord] = useState("");
   const [starsCount, setStarsCount] = useState(0);
 
-  const [winnerCount, setWinnerCount] = useState(0);
+  const onSubmitWord = async () => {
+    const score = await submitWord(currentWord);
+    setCurrentWord("");
 
-  useEffect(() => {
-    fetch("/api/winner-count").then(async (response) => {
-      setWinnerCount(await response.json());
-    });
-  }, []);
-
-  const sendWord = () => {
+    // TODO handle stars
     setStarsCount(starsCount + 50);
     console.log(currentWord);
   };
@@ -43,7 +43,7 @@ export default function Home() {
 
       <BottomBar
         word={currentWord}
-        onSendWord={sendWord}
+        onSubmitWord={onSubmitWord}
         onChangeWord={(word) => setCurrentWord(word)}
         starsCount={starsCount}
         canBuyHint={canBuyHint}
