@@ -6,6 +6,7 @@ import useCemantixApi from "@/app/hooks/useCemantixApi";
 import useCountdownToNextWord from "@/app/hooks/useCountdownToNextWord";
 import { useState, useEffect } from "react";
 import Words, { WordEntry } from "@/app/components/molecules/Words";
+import { HintMarket } from "@/app/components/molecules/HintMarket";
 
 const LOCAL_STORAGE_KEY = "cemantix_progress";
 const LOCAL_STORAGE_STREAK_KEY = "cemantix_streak";
@@ -25,14 +26,29 @@ export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [flammeCount, setFlammeCount] = useState(0);
   const [lastWinDate, setLastWinDate] = useState<string | null>(null);
+  const [isHintMarketOpen, setIsHintMarketOpen] = useState(false);
+  const [unlockedHints, setUnlockedHints] = useState(0);
+  const [scrapedHints, setScrapedHints] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetch("/api/hints")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.hints) {
+          setScrapedHints(data.hints);
+        }
+      })
+      .catch((err) => console.error("Erreur récupération indices:", err));
+  }, []);
 
   useEffect(() => {
     const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (savedData) {
       try {
-        const { date, words } = JSON.parse(savedData);
+        const { date, words, hints } = JSON.parse(savedData);
         if (date === getCurrentDateString()) {
           setTestedWords(words);
+          setUnlockedHints(hints || 0);
         } else {
           localStorage.removeItem(LOCAL_STORAGE_KEY);
         }
@@ -44,7 +60,9 @@ export default function Home() {
     const savedStreak = localStorage.getItem(LOCAL_STORAGE_STREAK_KEY);
     if (savedStreak) {
       try {
-        const { flammeCount, lastWinDate } = JSON.parse(savedStreak);
+        const { flammeCount, lastWinDate, stars } = JSON.parse(savedStreak);
+        if (stars !== undefined) setStarsCount(stars);
+        
         if (lastWinDate) {
           const today = getCurrentDateString();
           const todayDate = new Date(today);
@@ -72,19 +90,21 @@ export default function Home() {
     if (isLoaded) {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({
         date: getCurrentDateString(),
-        words: testedWords
+        words: testedWords,
+        hints: unlockedHints
       }));
     }
-  }, [testedWords, isLoaded]);
+  }, [testedWords, unlockedHints, isLoaded]);
 
   useEffect(() => {
     if (isLoaded) {
       localStorage.setItem(LOCAL_STORAGE_STREAK_KEY, JSON.stringify({
         flammeCount,
-        lastWinDate
+        lastWinDate,
+        stars: starsCount
       }));
     }
-  }, [flammeCount, lastWinDate, isLoaded]);
+  }, [flammeCount, lastWinDate, starsCount, isLoaded]);
 
   const onSubmitWord = async () => {
     if (!currentWord.trim()) return;
@@ -126,7 +146,14 @@ export default function Home() {
     }
   };
 
-  const canBuyHint = starsCount > 100;
+  const onBuyHint = (cost: number) => {
+    if (starsCount >= cost) {
+      setStarsCount(prev => prev - cost);
+      setUnlockedHints(prev => prev + 1);
+    }
+  };
+
+  const canBuyHint = starsCount >= 300;
 
   return (
     <div className="container mx-auto px-4 h-dvh flex flex-col">
@@ -152,13 +179,22 @@ export default function Home() {
         )}
       </div>
 
+      <HintMarket
+        isOpen={isHintMarketOpen}
+        onClose={() => setIsHintMarketOpen(false)}
+        starsCount={starsCount}
+        unlockedHints={unlockedHints}
+        onBuyHint={onBuyHint}
+        scrapedHints={scrapedHints}
+      />
+
       <BottomBar
         word={currentWord}
         onSubmitWord={onSubmitWord}
         onChangeWord={(word) => setCurrentWord(word)}
         starsCount={starsCount}
         canBuyHint={canBuyHint}
-        onOpenHintMarket={() => {}}
+        onOpenHintMarket={() => setIsHintMarketOpen(true)}
       />
     </div>
   );
