@@ -35,8 +35,7 @@ export const HeroSection = forwardRef<HTMLDivElement, HeroSectionProps>(
         <div className="flex flex-col gap-2 font-geist text-orange-950">
           <div className="flex gap-1 items-center">
             <FireIcon className="size-6 mb-0.5 text-orange-800" />
-            {flammeCount} victoire{flammeCount > 1 && "s"} journalière
-            {flammeCount > 1 && "s"}
+            {flammeCount} victoire{flammeCount > 1 ? "s" : ""} de suite
           </div>
 
           <div className="flex gap-1 items-center">
