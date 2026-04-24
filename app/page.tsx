@@ -235,14 +235,15 @@ export default function Home() {
   const canBuyHint = starsCount >= nextHintCost;
 
   return (
-    <div className="container mx-auto px-4 h-dvh flex flex-col">
+    <div className="container mx-auto h-dvh flex flex-col">
       <Header
+        className="px-4"
         flammeCount={flammeCount}
         remainingSeconds={remainingSeconds}
         winnerCount={winnerCount}
       />
 
-      <div className="flex-1 overflow-y-auto flex flex-col gap-8 pb-4">
+      <div className="flex-1 overflow-y-auto flex flex-col gap-8 pb-4 px-4">
         {testedWords.length === 0 ? (
           <HeroSection
             className="my-auto"
@@ -292,6 +293,7 @@ export default function Home() {
       />
 
       <BottomBar
+        className="px-4"
         word={currentWord}
         onSubmitWord={onSubmitWord}
         onChangeWord={(word) => {

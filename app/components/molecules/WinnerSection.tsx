@@ -51,8 +51,7 @@ export const WinnerSection = forwardRef<HTMLDivElement, WinnerSectionProps>(
         ref={ref}
       >
         <svg
-          width="358"
-          height="72"
+          className="w-full"
           viewBox="0 0 358 72"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
