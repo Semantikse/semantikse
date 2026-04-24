@@ -2,17 +2,15 @@ import React, { useState, useEffect } from 'react';
 
 const BONUS_POINTS = 100;
 
-const DATA_WORDS = [
-    { label: "Fruit", temp: 60, percentage: 80 },
-    { label: "Aliment", temp: 50, percentage: 65 },
-    { label: "Manger", temp: 31, percentage: 40 },
-    { label: "Cuisine", temp: 24, percentage: 25 },
-    { label: "Éponge", temp: 24, percentage: 20 },
-    { label: "Lieu", temp: 12, percentage: 10 },
-    { label: "Toit", temp: 12, percentage: 5 },
-    { label: "Maison", temp: -3, percentage: 2 },
-    { label: "Humain", temp: -3, percentage: 1 },
-];
+export type WordEntry = {
+    label: string;
+    temp: number;
+    percentage: number;
+};
+
+interface WordsProps {
+    words: WordEntry[];
+}
 
 const getWordMetas = (temp) => {
     if (temp >= 60) return { emoji: "😱", category: "< 100°", color: "#EE4620" };
@@ -23,9 +21,9 @@ const getWordMetas = (temp) => {
     return { emoji: "🧊", category: "< 0°", color: "#f97316" };
 };
 
-const WordRow = ({ word, showPoints = false, bonusValue = 0, animate = false }) => {
+const WordRow = ({ word, showPoints = false, bonusValue = 0, animate = false }: { word: WordEntry, showPoints?: boolean, bonusValue?: number, animate?: boolean }) => {
     const { emoji, category, color } = getWordMetas(word.temp);
-    const hasBar = word.temp >= 30;
+    const hasBar = word.percentage > 0;
     
     // État pour gérer la largeur de la barre (0 au début si on veut animer)
     const [width, setWidth] = useState(animate ? 0 : word.percentage);
@@ -46,7 +44,7 @@ const WordRow = ({ word, showPoints = false, bonusValue = 0, animate = false }) 
                 <div className="text-black text-base font-medium font-['Geist'] leading-6">{emoji}</div>
                 <div className="flex-1 text-black text-base font-medium font-['Geist'] leading-6">{word.label}</div>
                 <div className="flex justify-start items-center">
-                    <div className="text-black text-base font-medium font-['Geist'] leading-6">{word.temp}</div>
+                    <div className="text-black text-base font-medium font-['Geist'] leading-6">{Number(word.temp).toFixed(2)}</div>
                     <div className="text-black text-base font-medium font-['Geist'] leading-6">°C</div>
                 </div>
             </div>
@@ -79,9 +77,13 @@ const WordRow = ({ word, showPoints = false, bonusValue = 0, animate = false }) 
     );
 };
 
-export default function Words() {
-    const lastWord = DATA_WORDS[0];
-    const sortedTopWords = [...DATA_WORDS.slice(1)].sort((a, b) => b.temp - a.temp);
+export default function Words({ words }: WordsProps) {
+    if (!words || words.length === 0) {
+        return null;
+    }
+
+    const lastWord = words[words.length - 1];
+    const sortedTopWords = [...words].sort((a, b) => b.temp - a.temp);
 
     return (
         <div className="w-full self-stretch flex-1 inline-flex flex-col justify-start items-start gap-9">
