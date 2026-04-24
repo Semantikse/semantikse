@@ -12,7 +12,7 @@ async function runScraperTest() {
     } else {
       console.log(`${hints.length} indices récupérés avec succès :\n`);
       hints.forEach(hint => {
-        console.log( ${hint});
+        console.log(`${hint}`);
       });
     }
   } catch (error: any) {

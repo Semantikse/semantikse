@@ -12,7 +12,7 @@ interface WordsProps {
     words: WordEntry[];
 }
 
-const getWordMetas = (temp) => {
+const getWordMetas = (temp: number) => {
     if (temp >= 60) return { emoji: "😱", category: "< 100°", color: "#EE4620" };
     if (temp >= 40) return { emoji: "🔥", category: "< 60°",  color: "#EC8914" };
     if (temp >= 30) return { emoji: "🥵", category: "< 39°",  color: "#EC8914" };
