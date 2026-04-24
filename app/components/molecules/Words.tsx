@@ -1,7 +1,11 @@
 import type { WordEntry } from "@/app/constants";
 import { useEffect, useState } from "react";
 
-const BONUS_POINTS = 100;
+export type WordEntry = {
+  label: string;
+  temp: number;
+  percentage: number;
+};
 
 interface WordsProps {
   words: WordEntry[];
@@ -101,6 +105,8 @@ export default function Words({ words }: WordsProps) {
   const lastWord = words[words.length - 1];
   const sortedTopWords = words.slice(0, -1).sort((a, b) => b.temp - a.temp);
 
+  const earnedStars = Math.round((lastWord.percentage / 100) * 5) * 10;
+
   return (
     <div className="w-full self-stretch flex-1 inline-flex flex-col justify-start items-start gap-9">
       <div className="w-full flex flex-col justify-start items-start gap-3">
@@ -110,8 +116,8 @@ export default function Words({ words }: WordsProps) {
         {/* On active l'animation uniquement ici */}
         <WordRow
           word={lastWord}
-          showPoints={true}
-          bonusValue={BONUS_POINTS}
+          showPoints={earnedStars > 0}
+          bonusValue={earnedStars}
           animate={true}
         />
       </div>
