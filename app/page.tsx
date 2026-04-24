@@ -87,11 +87,12 @@ export default function Home() {
   }, [streakLoaded]);
 
   const onSubmitWord = async () => {
-    if (!currentWord.trim() || isSubmitting) return;
+    const formattedWord = currentWord.trim().toLowerCase();
+    if (!formattedWord || isSubmitting) return;
 
     setIsSubmitting(true);
     try {
-      const score = await submitWord(currentWord);
+      const score = await submitWord(formattedWord);
 
       if (
         score.error ||
@@ -110,14 +111,14 @@ export default function Home() {
       const earnedStars = 20 + Math.round(score.percentage * 0.8);
 
       const alreadyTested = testedWords.some(
-        (w) => w.label.toLowerCase() === currentWord.toLowerCase(),
+        (w) => w.label.toLowerCase() === formattedWord,
       );
       const newWords = alreadyTested
         ? testedWords
         : [
             ...testedWords,
             {
-              label: currentWord,
+              label: formattedWord,
               temp: score.degree as number,
               percentage: score.percentage as number,
             },
