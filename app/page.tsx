@@ -4,61 +4,23 @@ import { Header } from "@/app/components/molecules/Header";
 import { HeroSection } from "@/app/components/molecules/HeroSection";
 import { HintMarket } from "@/app/components/molecules/HintMarket";
 import { WinnerSection } from "@/app/components/molecules/WinnerSection";
-import Words, { WordEntry } from "@/app/components/molecules/Words";
+import Words from "@/app/components/molecules/Words";
+import {
+  HINTS_CONFIG,
+  INITIAL_PROGRESS,
+  INITIAL_STREAK,
+  LOCAL_STORAGE_KEY,
+  LOCAL_STORAGE_RECORDS_KEY,
+  LOCAL_STORAGE_STREAK_KEY,
+  type Progress,
+  type Records,
+  type Streak,
+  type WinStats,
+} from "@/app/constants";
 import useCemantixApi from "@/app/hooks/useCemantixApi";
 import useCountdownToNextWord from "@/app/hooks/useCountdownToNextWord";
 import useLocalStorage from "@/app/hooks/useLocalStorage";
 import { useEffect, useState } from "react";
-
-const LOCAL_STORAGE_KEY = "cemantix_progress";
-const LOCAL_STORAGE_STREAK_KEY = "cemantix_streak";
-const LOCAL_STORAGE_RECORDS_KEY = "cemantix_records";
-
-type WinStats = {
-  guesses: number;
-  duration: number;
-  place: number;
-  hints: number;
-};
-
-type Progress = {
-  date: string;
-  words: WordEntry[];
-  hints: number;
-  won: boolean;
-  firstWordTs: number | null;
-  winTs: number | null;
-  wonStats: WinStats | null;
-};
-
-type Records = {
-  guesses?: number;
-  duration?: number;
-  place?: number;
-  hints?: number;
-};
-
-type Streak = {
-  flammeCount: number;
-  lastWinDate: string | null;
-  stars: number;
-};
-
-const INITIAL_PROGRESS: Progress = {
-  date: "",
-  words: [],
-  hints: 0,
-  won: false,
-  firstWordTs: null,
-  winTs: null,
-  wonStats: null,
-};
-
-const INITIAL_STREAK: Streak = {
-  flammeCount: 0,
-  lastWinDate: null,
-  stars: 0,
-};
 
 const getCurrentDateString = () => {
   return new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Paris" });
@@ -230,8 +192,7 @@ export default function Home() {
     }
   };
 
-  const HINTS_COSTS = [300, 400, 500, 600, 700, 800, 800, 800];
-  const nextHintCost = HINTS_COSTS[unlockedHints] ?? Infinity;
+  const nextHintCost = HINTS_CONFIG[unlockedHints].cost ?? Infinity;
   const canBuyHint = starsCount >= nextHintCost;
 
   return (

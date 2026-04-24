@@ -2,18 +2,8 @@
 
 import { PrimaryButton } from "@/app/components/atoms/PrimaryButton";
 import { SecondaryButton } from "@/app/components/atoms/SecondaryButton";
+import { HINTS_CONFIG } from "@/app/constants";
 import { LightBulbIcon, StarIcon } from "@heroicons/react/20/solid";
-
-const HINTS_CONFIG = [
-  { id: 1, cost: 300 },
-  { id: 2, cost: 400 },
-  { id: 3, cost: 500 },
-  { id: 4, cost: 600 },
-  { id: 5, cost: 700 },
-  { id: 6, cost: 800 },
-  { id: 7, cost: 800 },
-  { id: 8, cost: 800 },
-];
 
 export interface HintMarketProps {
   isOpen: boolean;

@@ -1,12 +1,7 @@
+import type { WordEntry } from "@/app/constants";
 import { useEffect, useState } from "react";
 
 const BONUS_POINTS = 100;
-
-export type WordEntry = {
-  label: string;
-  temp: number;
-  percentage: number;
-};
 
 interface WordsProps {
   words: WordEntry[];
