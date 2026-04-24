@@ -4,8 +4,14 @@ import { Header } from "@/app/components/molecules/Header";
 import { HeroSection } from "@/app/components/molecules/HeroSection";
 import useCemantixApi from "@/app/hooks/useCemantixApi";
 import useCountdownToNextWord from "@/app/hooks/useCountdownToNextWord";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Words, { WordEntry } from "@/app/components/molecules/Words";
+
+const LOCAL_STORAGE_KEY = "cemantix_progress";
+
+const getCurrentDateString = () => {
+  return new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Paris" });
+};
 
 export default function Home() {
   const remainingSeconds = useCountdownToNextWord();
@@ -15,6 +21,33 @@ export default function Home() {
   const [currentWord, setCurrentWord] = useState("");
   const [testedWords, setTestedWords] = useState<WordEntry[]>([]);
   const [starsCount, setStarsCount] = useState(0);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (savedData) {
+      try {
+        const { date, words } = JSON.parse(savedData);
+        if (date === getCurrentDateString()) {
+          setTestedWords(words);
+        } else {
+          localStorage.removeItem(LOCAL_STORAGE_KEY);
+        }
+      } catch (e) {
+        console.error("Erreur de lecture du localStorage", e);
+      }
+    }
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({
+        date: getCurrentDateString(),
+        words: testedWords
+      }));
+    }
+  }, [testedWords, isLoaded]);
 
   const onSubmitWord = async () => {
     if (!currentWord.trim()) return;
