@@ -129,7 +129,7 @@ export default function Home() {
   const canBuyHint = starsCount > 100;
 
   return (
-    <div className="container mx-auto px-4 bg-orange-50 h-dvh flex flex-col">
+    <div className="container mx-auto px-4 h-dvh flex flex-col">
       <Header
         flammeCount={flammeCount}
         remainingSeconds={remainingSeconds}
