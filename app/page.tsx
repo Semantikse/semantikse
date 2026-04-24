@@ -33,10 +33,22 @@ export default function Home() {
   const [unlockedHints, setUnlockedHints] = useState(0);
   const [scrapedHints, setScrapedHints] = useState<string[]>([]);
   const [isWon, setIsWon] = useState(false);
-  const [firstWordTimestamp, setFirstWordTimestamp] = useState<number | null>(null);
+  const [firstWordTimestamp, setFirstWordTimestamp] = useState<number | null>(
+    null,
+  );
   const [winTimestamp, setWinTimestamp] = useState<number | null>(null);
-  const [bestRecords, setBestRecords] = useState<{ guesses?: number; duration?: number; place?: number; hints?: number }>({});
-  const [winStats, setWinStats] = useState<{ guesses: number; duration: number; place: number; hints: number } | null>(null);
+  const [bestRecords, setBestRecords] = useState<{
+    guesses?: number;
+    duration?: number;
+    place?: number;
+    hints?: number;
+  }>({});
+  const [winStats, setWinStats] = useState<{
+    guesses: number;
+    duration: number;
+    place: number;
+    hints: number;
+  } | null>(null);
 
   useEffect(() => {
     fetch("/api/hints")
@@ -53,7 +65,8 @@ export default function Home() {
     const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (savedData) {
       try {
-        const { date, words, hints, won, firstWordTs, winTs, wonStats } = JSON.parse(savedData);
+        const { date, words, hints, won, firstWordTs, winTs, wonStats } =
+          JSON.parse(savedData);
         if (date === getCurrentDateString()) {
           setTestedWords(words);
           setUnlockedHints(hints || 0);
@@ -121,7 +134,15 @@ export default function Home() {
         }),
       );
     }
-  }, [testedWords, unlockedHints, isLoaded, isWon, firstWordTimestamp, winTimestamp, winStats]);
+  }, [
+    testedWords,
+    unlockedHints,
+    isLoaded,
+    isWon,
+    firstWordTimestamp,
+    winTimestamp,
+    winStats,
+  ]);
 
   useEffect(() => {
     if (isLoaded) {
@@ -142,12 +163,16 @@ export default function Home() {
     try {
       const score = await submitWord(currentWord);
 
-      if (score.error || score.degree === undefined || score.percentage === undefined) {
+      if (
+        score.error ||
+        score.degree === undefined ||
+        score.percentage === undefined
+      ) {
         // Le mot n'existe pas ou n'est pas reconnu par cemantix
         setErrorMessage("Ce mot n'est pas reconnu");
         return;
       }
-      
+
       setErrorMessage("");
 
       setTestedWords((prev) => {
@@ -185,7 +210,9 @@ export default function Home() {
 
         // Calcul et sauvegarde des records
         const guesses = testedWords.length + 1;
-        const duration = firstWordTimestamp ? Math.floor((now - firstWordTimestamp) / 1000) : 0;
+        const duration = firstWordTimestamp
+          ? Math.floor((now - firstWordTimestamp) / 1000)
+          : 0;
         const place = winnerCount ?? 0;
         const hints = unlockedHints;
 
@@ -194,16 +221,21 @@ export default function Home() {
         setWinStats(currentStats);
 
         const newRecords: typeof bestRecords = { ...bestRecords };
-        let isGuessRecord = !bestRecords.guesses || guesses < bestRecords.guesses;
-        let isDurationRecord = !bestRecords.duration || duration < bestRecords.duration;
-        let isPlaceRecord = !bestRecords.place || place < bestRecords.place;
-        let isHintsRecord = !bestRecords.hints || hints < bestRecords.hints;
+        const isGuessRecord =
+          !bestRecords.guesses || guesses < bestRecords.guesses;
+        const isDurationRecord =
+          !bestRecords.duration || duration < bestRecords.duration;
+        const isPlaceRecord = !bestRecords.place || place < bestRecords.place;
+        const isHintsRecord = !bestRecords.hints || hints < bestRecords.hints;
         if (isGuessRecord) newRecords.guesses = guesses;
         if (isDurationRecord) newRecords.duration = duration;
         if (isPlaceRecord) newRecords.place = place;
         if (isHintsRecord) newRecords.hints = hints;
         setBestRecords(newRecords);
-        localStorage.setItem(LOCAL_STORAGE_RECORDS_KEY, JSON.stringify(newRecords));
+        localStorage.setItem(
+          LOCAL_STORAGE_RECORDS_KEY,
+          JSON.stringify(newRecords),
+        );
       }
 
       setCurrentWord("");
@@ -213,7 +245,6 @@ export default function Home() {
       setStarsCount((prev) => prev + earnedStars);
     } catch (e) {
       console.error("Erreur lors de la soumission du mot:", e);
-      // Gérer l'erreur (par exemple si le mot n'est pas dans le dictionnaire)
     }
   };
 
@@ -249,10 +280,25 @@ export default function Home() {
             {isWon && winStats && (
               <WinnerSection
                 className="shrink-0"
-                usedWordCount={{ value: winStats.guesses, newRecord: bestRecords.guesses === winStats.guesses }}
-                place={{ value: winStats.place, newRecord: bestRecords.place === winStats.place }}
-                duration={{ value: winStats.duration, newRecord: bestRecords.duration === winStats.duration && winStats.duration > 0 }}
-                usedHintCount={{ value: winStats.hints, totalAvailable: 8, newRecord: bestRecords.hints === winStats.hints }}
+                usedWordCount={{
+                  value: winStats.guesses,
+                  newRecord: bestRecords.guesses === winStats.guesses,
+                }}
+                place={{
+                  value: winStats.place,
+                  newRecord: bestRecords.place === winStats.place,
+                }}
+                duration={{
+                  value: winStats.duration,
+                  newRecord:
+                    bestRecords.duration === winStats.duration &&
+                    winStats.duration > 0,
+                }}
+                usedHintCount={{
+                  value: winStats.hints,
+                  totalAvailable: 8,
+                  newRecord: bestRecords.hints === winStats.hints,
+                }}
               />
             )}
 
