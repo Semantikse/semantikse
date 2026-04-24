@@ -83,7 +83,7 @@ export default function Words({ words }: WordsProps) {
     }
 
     const lastWord = words[words.length - 1];
-    const sortedTopWords = [...words].sort((a, b) => b.temp - a.temp);
+    const sortedTopWords = words.slice(0, -1).sort((a, b) => b.temp - a.temp);
 
     return (
         <div className="w-full self-stretch flex-1 inline-flex flex-col justify-start items-start gap-9">
@@ -101,16 +101,18 @@ export default function Words({ words }: WordsProps) {
                 />
             </div>
 
-            <div className="w-full flex flex-col justify-start items-start gap-3">
-                <div className="self-stretch text-zinc-900 text-base font-normal font-['Newake'] uppercase leading-6 tracking-wide">
-                    Meilleurs Mots
+            {sortedTopWords.length > 0 && (
+                <div className="w-full flex flex-col justify-start items-start gap-3">
+                    <div className="self-stretch text-zinc-900 text-base font-normal font-['Newake'] uppercase leading-6 tracking-wide">
+                        Meilleurs Mots
+                    </div>
+                    <div className="w-full flex flex-col gap-4">
+                        {sortedTopWords.map((word, idx) => (
+                            <WordRow key={`${word.label}-${idx}`} word={word} />
+                        ))}
+                    </div>
                 </div>
-                <div className="w-full flex flex-col gap-4">
-                    {sortedTopWords.map((word, idx) => (
-                        <WordRow key={`${word.label}-${idx}`} word={word} />
-                    ))}
-                </div>
-            </div>
+            )}
 
         </div>
     );
