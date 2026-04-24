@@ -105,7 +105,7 @@ export default function Home() {
       const now = Date.now();
       const today = getCurrentDateString();
       const isVictory = score.percentage === 100 || score.degree === 100;
-      const earnedStars = Math.round((score.percentage / 100) * 5) * 10;
+      const earnedStars = 20 + Math.round(score.percentage * 0.8);
 
       const alreadyTested = testedWords.some(
         (w) => w.label.toLowerCase() === currentWord.toLowerCase(),
