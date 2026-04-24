@@ -137,15 +137,19 @@ export default function Home() {
       />
 
       <div className="flex-1 overflow-y-auto flex flex-col gap-8 pb-4">
-        <div className={testedWords.length === 0 ? "flex-1 flex flex-col justify-center" : "mt-4"}>
-          <HeroSection
-            flammeCount={flammeCount}
-            remainingSeconds={remainingSeconds}
-            winnerCount={winnerCount}
-          />
-        </div>
-
-        <Words words={testedWords} />
+        {testedWords.length === 0 ? (
+          <div className="flex-1 flex flex-col justify-center">
+            <HeroSection
+              flammeCount={flammeCount}
+              remainingSeconds={remainingSeconds}
+              winnerCount={winnerCount}
+            />
+          </div>
+        ) : (
+          <div className="mt-4">
+            <Words words={testedWords} />
+          </div>
+        )}
       </div>
 
       <BottomBar
