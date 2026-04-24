@@ -1,16 +1,8 @@
 "use client";
 
+import { PrimaryButton } from "@/app/components/atoms/PrimaryButton";
+import { SecondaryButton } from "@/app/components/atoms/SecondaryButton";
 import { LightBulbIcon, StarIcon } from "@heroicons/react/20/solid";
-import { cn } from "@/app/utils/cn";
-
-export interface HintMarketProps {
-  isOpen: boolean;
-  onClose: () => void;
-  starsCount: number;
-  unlockedHints: number;
-  onBuyHint: (cost: number) => void;
-  scrapedHints?: string[];
-}
 
 const HINTS_CONFIG = [
   { id: 1, cost: 300 },
@@ -23,6 +15,15 @@ const HINTS_CONFIG = [
   { id: 8, cost: 800 },
 ];
 
+export interface HintMarketProps {
+  isOpen: boolean;
+  onClose: () => void;
+  starsCount: number;
+  unlockedHints: number;
+  onBuyHint: (cost: number) => void;
+  scrapedHints?: string[];
+}
+
 export const HintMarket = ({
   isOpen,
   onClose,
@@ -34,36 +35,26 @@ export const HintMarket = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col justify-end bg-black/40 transition-opacity p-2 sm:p-4">
-      {/* Clic à l'extérieur pour fermer */}
+    <div className="fixed inset-0 z-50 flex flex-col justify-end bg-black/40 transition-opacity px-2 sm:px-4">
       <div className="absolute inset-0" onClick={onClose} />
 
-      <div className="w-full max-w-md mx-auto px-4 pt-5 pb-12 bg-orange-100 rounded-2xl sm:rounded-b-none sm:rounded-tl-2xl sm:rounded-tr-2xl flex flex-col gap-6 shadow-2xl relative max-h-[85vh]">
-        <div className="flex justify-between items-center shrink-0">
-          <div className="text-red-950 text-2xl font-normal font-newake tracking-wide">
+      <section className="w-full max-w-md mx-auto pt-5 pb-12 bg-orange-100 rounded-2xl sm:rounded-b-none sm:rounded-tl-2xl sm:rounded-tr-2xl flex flex-col gap-6 shadow-2xl relative max-h-[85vh]">
+        <header className="flex justify-between items-center shrink-0 px-4">
+          <h2 className="text-red-950 text-2xl font-normal font-newake tracking-wide">
             Indices
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1">
-              <span className="text-orange-600 text-base font-normal font-newake tracking-wide">
-                {starsCount}
-              </span>
-              <StarIcon className="w-5 h-5 text-orange-600 mb-0.5" />
-            </div>
-            <button
-              onClick={onClose}
-              className="h-10 px-4 py-2 bg-orange-100 rounded outline outline-2 outline-offset-[-2px] outline-orange-600 flex justify-center items-center gap-2 hover:bg-orange-200 transition-colors -skew-x-[12deg]"
-            >
-              <div className="skew-x-[12deg] flex justify-center items-center">
-                <span className="text-orange-600 text-base font-normal font-newake uppercase tracking-wide mt-0.5">
-                  Fermer
-                </span>
-              </div>
-            </button>
-          </div>
-        </div>
+          </h2>
 
-        <div className="flex-1 overflow-y-auto flex flex-col gap-4 no-scrollbar">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1 text-orange-600 font-newake">
+              {starsCount}
+              <StarIcon className="w-5 h-5 text-orange-600 mb-1" />
+            </div>
+
+            <SecondaryButton onClick={onClose}>Fermer</SecondaryButton>
+          </div>
+        </header>
+
+        <div className="flex-1 overflow-y-auto flex flex-col gap-4">
           {HINTS_CONFIG.map((hint, idx) => {
             const isUnlocked = idx < unlockedHints;
             const isNext = idx === unlockedHints;
@@ -74,11 +65,9 @@ export const HintMarket = ({
               return (
                 <div
                   key={hint.id}
-                  className="w-full min-h-10 py-2 flex items-center gap-6"
+                  className="w-full min-h-10 flex items-center gap-6 px-4"
                 >
-                  <div className="w-6 h-6 flex justify-center items-center shrink-0">
-                    <LightBulbIcon className="w-5 h-5 text-yellow-400" />
-                  </div>
+                  <LightBulbIcon className="size-5 shrink-0 text-yellow-400" />
                   <div className="flex-1 text-red-900 text-base font-normal font-newake tracking-wide leading-tight">
                     {hintText}
                   </div>
@@ -88,54 +77,34 @@ export const HintMarket = ({
 
             if (isNext && canAfford) {
               return (
-                <div
-                  key={hint.id}
-                  className="w-full flex items-center gap-6"
-                >
-                  <div className="w-6 h-6 flex justify-center items-center">
-                    <LightBulbIcon className="w-5 h-5 text-orange-600" />
-                  </div>
-                  <div className="flex-1 text-orange-600 text-base font-normal font-newake uppercase tracking-wide">
+                <div key={hint.id} className="flex items-center gap-6 px-4">
+                  <LightBulbIcon className="size-5 shrink-0 text-orange-600" />
+                  <div className="flex-1 text-orange-600 font-newake uppercase tracking-wide">
                     Indice {hint.id}
                   </div>
-                  <button
-                    onClick={() => onBuyHint(hint.cost)}
-                    className="h-10 px-4 py-2 bg-orange-600 rounded outline outline-2 outline-offset-[-2px] outline-orange-600 flex justify-center items-center hover:bg-orange-700 transition-colors -skew-x-[12deg]"
-                  >
-                    <div className="skew-x-[12deg] flex items-center gap-1">
-                      <span className="text-orange-100 text-base font-normal font-newake uppercase tracking-wide mt-0.5">
-                        {hint.cost}
-                      </span>
-                      <StarIcon className="w-5 h-5 text-orange-100 mb-0.5" />
-                    </div>
-                  </button>
+                  <PrimaryButton onClick={() => onBuyHint(hint.cost)}>
+                    {hint.cost}
+                    <StarIcon className="size-5 text-orange-100 mb-0.5" />
+                  </PrimaryButton>
                 </div>
               );
             }
 
             return (
-              <div
-                key={hint.id}
-                className="w-full flex items-center gap-6"
-              >
-                <div className="w-6 h-6 flex justify-center items-center">
-                  <LightBulbIcon className="w-5 h-5 text-orange-300" />
-                </div>
+              <div key={hint.id} className="flex items-center gap-6 px-4">
+                <LightBulbIcon className="size-5 shrink-0 text-orange-300" />
                 <div className="flex-1 text-orange-300 text-base font-normal font-newake uppercase tracking-wide">
                   Indice {hint.id}
                 </div>
-                <div className="h-10 px-4 py-2 bg-orange-300 rounded outline outline-2 outline-offset-[-2px] outline-orange-300 flex justify-center items-center -skew-x-[12deg]">
-                  <div className="skew-x-[12deg] flex items-center justify-center min-w-[3rem]">
-                    <span className="text-orange-100 text-base font-normal font-newake uppercase tracking-wide mt-0.5">
-                      {hint.cost}
-                    </span>
-                  </div>
-                </div>
+                <PrimaryButton disabled>
+                  {hint.cost}
+                  <StarIcon className="size-5 text-orange-100 mb-0.5" />
+                </PrimaryButton>
               </div>
             );
           })}
         </div>
-      </div>
+      </section>
     </div>
   );
 };
