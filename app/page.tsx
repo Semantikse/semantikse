@@ -7,11 +7,58 @@ import { WinnerSection } from "@/app/components/molecules/WinnerSection";
 import Words, { WordEntry } from "@/app/components/molecules/Words";
 import useCemantixApi from "@/app/hooks/useCemantixApi";
 import useCountdownToNextWord from "@/app/hooks/useCountdownToNextWord";
+import useLocalStorage from "@/app/hooks/useLocalStorage";
 import { useEffect, useState } from "react";
 
 const LOCAL_STORAGE_KEY = "cemantix_progress";
 const LOCAL_STORAGE_STREAK_KEY = "cemantix_streak";
 const LOCAL_STORAGE_RECORDS_KEY = "cemantix_records";
+
+type WinStats = {
+  guesses: number;
+  duration: number;
+  place: number;
+  hints: number;
+};
+
+type Progress = {
+  date: string;
+  words: WordEntry[];
+  hints: number;
+  won: boolean;
+  firstWordTs: number | null;
+  winTs: number | null;
+  wonStats: WinStats | null;
+};
+
+type Records = {
+  guesses?: number;
+  duration?: number;
+  place?: number;
+  hints?: number;
+};
+
+type Streak = {
+  flammeCount: number;
+  lastWinDate: string | null;
+  stars: number;
+};
+
+const INITIAL_PROGRESS: Progress = {
+  date: "",
+  words: [],
+  hints: 0,
+  won: false,
+  firstWordTs: null,
+  winTs: null,
+  wonStats: null,
+};
+
+const INITIAL_STREAK: Streak = {
+  flammeCount: 0,
+  lastWinDate: null,
+  stars: 0,
+};
 
 const getCurrentDateString = () => {
   return new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Paris" });
@@ -19,36 +66,34 @@ const getCurrentDateString = () => {
 
 export default function Home() {
   const remainingSeconds = useCountdownToNextWord();
-
   const { winnerCount, submitWord } = useCemantixApi();
 
   const [currentWord, setCurrentWord] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [testedWords, setTestedWords] = useState<WordEntry[]>([]);
-  const [starsCount, setStarsCount] = useState(0);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [flammeCount, setFlammeCount] = useState(0);
-  const [lastWinDate, setLastWinDate] = useState<string | null>(null);
   const [isHintMarketOpen, setIsHintMarketOpen] = useState(false);
-  const [unlockedHints, setUnlockedHints] = useState(0);
   const [scrapedHints, setScrapedHints] = useState<string[]>([]);
-  const [isWon, setIsWon] = useState(false);
-  const [firstWordTimestamp, setFirstWordTimestamp] = useState<number | null>(
-    null,
+
+  const [progress, setProgress, progressLoaded] = useLocalStorage<Progress>(
+    LOCAL_STORAGE_KEY,
+    INITIAL_PROGRESS,
   );
-  const [winTimestamp, setWinTimestamp] = useState<number | null>(null);
-  const [bestRecords, setBestRecords] = useState<{
-    guesses?: number;
-    duration?: number;
-    place?: number;
-    hints?: number;
-  }>({});
-  const [winStats, setWinStats] = useState<{
-    guesses: number;
-    duration: number;
-    place: number;
-    hints: number;
-  } | null>(null);
+  const [bestRecords, setBestRecords] = useLocalStorage<Records>(
+    LOCAL_STORAGE_RECORDS_KEY,
+    {},
+  );
+  const [streak, setStreak, streakLoaded] = useLocalStorage<Streak>(
+    LOCAL_STORAGE_STREAK_KEY,
+    INITIAL_STREAK,
+  );
+
+  const {
+    words: testedWords,
+    hints: unlockedHints,
+    won: isWon,
+    firstWordTs: firstWordTimestamp,
+    wonStats: winStats,
+  } = progress;
+  const { flammeCount, lastWinDate, stars: starsCount } = streak;
 
   useEffect(() => {
     fetch("/api/hints")
@@ -61,101 +106,32 @@ export default function Home() {
       .catch((err) => console.error("Erreur récupération indices:", err));
   }, []);
 
+  // Reset de la progression quand on change de jour
   useEffect(() => {
-    const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (savedData) {
-      try {
-        const { date, words, hints, won, firstWordTs, winTs, wonStats } =
-          JSON.parse(savedData);
-        if (date === getCurrentDateString()) {
-          setTestedWords(words);
-          setUnlockedHints(hints || 0);
-          if (won) setIsWon(true);
-          if (firstWordTs) setFirstWordTimestamp(firstWordTs);
-          if (winTs) setWinTimestamp(winTs);
-          if (wonStats) setWinStats(wonStats);
-        } else {
-          localStorage.removeItem(LOCAL_STORAGE_KEY);
-        }
-      } catch (e) {
-        console.error("Erreur de lecture du localStorage", e);
-      }
+    if (!progressLoaded) return;
+    const today = getCurrentDateString();
+    if (progress.date !== today) {
+      setProgress({ ...INITIAL_PROGRESS, date: today });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [progressLoaded]);
 
-    // Charger les records
-    try {
-      const savedRecords = localStorage.getItem(LOCAL_STORAGE_RECORDS_KEY);
-      if (savedRecords) setBestRecords(JSON.parse(savedRecords));
-    } catch (e) {
-      console.error("Erreur de lecture des records", e);
-    }
-
-    const savedStreak = localStorage.getItem(LOCAL_STORAGE_STREAK_KEY);
-    if (savedStreak) {
-      try {
-        const { flammeCount, lastWinDate, stars } = JSON.parse(savedStreak);
-        if (stars !== undefined) setStarsCount(stars);
-
-        if (lastWinDate) {
-          const today = getCurrentDateString();
-          const todayDate = new Date(today);
-          const lastWin = new Date(lastWinDate);
-
-          const diffTime = Math.abs(todayDate.getTime() - lastWin.getTime());
-          const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-
-          if (diffDays > 1) {
-            setFlammeCount(0); // Streak broken
-          } else {
-            setFlammeCount(flammeCount);
-          }
-          setLastWinDate(lastWinDate);
-        }
-      } catch (e) {
-        console.error("Erreur lecture streak", e);
-      }
-    }
-
-    setIsLoaded(true);
-  }, []);
-
+  // Streak cassée si le dernier succès date de plus d'un jour
   useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem(
-        LOCAL_STORAGE_KEY,
-        JSON.stringify({
-          date: getCurrentDateString(),
-          words: testedWords,
-          hints: unlockedHints,
-          won: isWon,
-          firstWordTs: firstWordTimestamp,
-          winTs: winTimestamp,
-          wonStats: winStats,
-        }),
-      );
+    if (!streakLoaded) return;
+    if (!streak.lastWinDate) return;
+    const today = getCurrentDateString();
+    const diffDays = Math.round(
+      Math.abs(
+        new Date(today).getTime() - new Date(streak.lastWinDate).getTime(),
+      ) /
+        (1000 * 60 * 60 * 24),
+    );
+    if (diffDays > 1) {
+      setStreak((s) => ({ ...s, flammeCount: 0 }));
     }
-  }, [
-    testedWords,
-    unlockedHints,
-    isLoaded,
-    isWon,
-    firstWordTimestamp,
-    winTimestamp,
-    winStats,
-  ]);
-
-  useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem(
-        LOCAL_STORAGE_STREAK_KEY,
-        JSON.stringify({
-          flammeCount,
-          lastWinDate,
-          stars: starsCount,
-        }),
-      );
-    }
-  }, [flammeCount, lastWinDate, starsCount, isLoaded]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [streakLoaded]);
 
   const onSubmitWord = async () => {
     if (!currentWord.trim()) return;
@@ -168,81 +144,80 @@ export default function Home() {
         score.degree === undefined ||
         score.percentage === undefined
       ) {
-        // Le mot n'existe pas ou n'est pas reconnu par cemantix
         setErrorMessage("Ce mot n'est pas reconnu");
         return;
       }
 
       setErrorMessage("");
 
-      setTestedWords((prev) => {
-        // Éviter d'ajouter des doublons
-        if (
-          prev.some((w) => w.label.toLowerCase() === currentWord.toLowerCase())
-        ) {
-          return prev;
-        }
-        return [
-          ...prev,
-          {
-            label: currentWord,
-            temp: score.degree as number,
-            percentage: score.percentage as number,
-          },
-        ];
-      });
+      const now = Date.now();
+      const today = getCurrentDateString();
+      const isVictory = score.percentage === 100 || score.degree === 100;
+      const earnedStars = Math.round((score.percentage / 100) * 5) * 10;
 
-      // Gestion du premier mot
-      if (firstWordTimestamp === null) {
-        setFirstWordTimestamp(Date.now());
+      const alreadyTested = testedWords.some(
+        (w) => w.label.toLowerCase() === currentWord.toLowerCase(),
+      );
+      const newWords = alreadyTested
+        ? testedWords
+        : [
+            ...testedWords,
+            {
+              label: currentWord,
+              temp: score.degree as number,
+              percentage: score.percentage as number,
+            },
+          ];
+      const newFirstWordTs = firstWordTimestamp ?? now;
+
+      let newWinStats: WinStats | null = winStats;
+      if (isVictory) {
+        newWinStats = {
+          guesses: newWords.length,
+          duration: Math.floor((now - newFirstWordTs) / 1000),
+          place: winnerCount ?? 0,
+          hints: unlockedHints,
+        };
       }
 
-      // Gestion des flammes (victoire si percentage === 100 ou degree === 100)
-      if (score.percentage === 100 || score.degree === 100) {
-        const now = Date.now();
-        const today = getCurrentDateString();
-        setIsWon(true);
-        setWinTimestamp(now);
-        if (lastWinDate !== today) {
-          setFlammeCount((prev) => prev + 1);
-          setLastWinDate(today);
-        }
+      setProgress((p) => ({
+        ...p,
+        words: newWords,
+        firstWordTs: newFirstWordTs,
+        won: isVictory || p.won,
+        winTs: isVictory ? now : p.winTs,
+        wonStats: newWinStats,
+      }));
 
-        // Calcul et sauvegarde des records
-        const guesses = testedWords.length + 1;
-        const duration = firstWordTimestamp
-          ? Math.floor((now - firstWordTimestamp) / 1000)
-          : 0;
-        const place = winnerCount ?? 0;
-        const hints = unlockedHints;
+      if (isVictory && newWinStats) {
+        const stats = newWinStats;
+        setBestRecords((prev) => ({
+          guesses:
+            !prev.guesses || stats.guesses < prev.guesses
+              ? stats.guesses
+              : prev.guesses,
+          duration:
+            !prev.duration || stats.duration < prev.duration
+              ? stats.duration
+              : prev.duration,
+          place:
+            !prev.place || stats.place < prev.place ? stats.place : prev.place,
+          hints:
+            !prev.hints || stats.hints < prev.hints ? stats.hints : prev.hints,
+        }));
 
-        // Figer les stats de la victoire
-        const currentStats = { guesses, duration, place, hints };
-        setWinStats(currentStats);
-
-        const newRecords: typeof bestRecords = { ...bestRecords };
-        const isGuessRecord =
-          !bestRecords.guesses || guesses < bestRecords.guesses;
-        const isDurationRecord =
-          !bestRecords.duration || duration < bestRecords.duration;
-        const isPlaceRecord = !bestRecords.place || place < bestRecords.place;
-        const isHintsRecord = !bestRecords.hints || hints < bestRecords.hints;
-        if (isGuessRecord) newRecords.guesses = guesses;
-        if (isDurationRecord) newRecords.duration = duration;
-        if (isPlaceRecord) newRecords.place = place;
-        if (isHintsRecord) newRecords.hints = hints;
-        setBestRecords(newRecords);
-        localStorage.setItem(
-          LOCAL_STORAGE_RECORDS_KEY,
-          JSON.stringify(newRecords),
-        );
+        setStreak((s) => ({
+          ...s,
+          stars: s.stars + earnedStars,
+          ...(s.lastWinDate !== today
+            ? { flammeCount: s.flammeCount + 1, lastWinDate: today }
+            : {}),
+        }));
+      } else {
+        setStreak((s) => ({ ...s, stars: s.stars + earnedStars }));
       }
 
       setCurrentWord("");
-
-      // Étoiles proportionnelles au score : 0, 10, 20, 30, 40, ou 50
-      const earnedStars = Math.round((score.percentage / 100) * 5) * 10;
-      setStarsCount((prev) => prev + earnedStars);
     } catch (e) {
       console.error("Erreur lors de la soumission du mot:", e);
     }
@@ -250,8 +225,8 @@ export default function Home() {
 
   const onBuyHint = (cost: number) => {
     if (starsCount >= cost) {
-      setStarsCount((prev) => prev - cost);
-      setUnlockedHints((prev) => prev + 1);
+      setStreak((s) => ({ ...s, stars: s.stars - cost }));
+      setProgress((p) => ({ ...p, hints: p.hints + 1 }));
     }
   };
 

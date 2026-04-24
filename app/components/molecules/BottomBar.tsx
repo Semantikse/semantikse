@@ -75,6 +75,7 @@ export const BottomBar = forwardRef<HTMLDivElement, BottomBarProps>(
         )}
         <form onSubmit={handleSubmitForm} className="flex gap-1 items-center">
           <TextInput
+            autoFocus
             value={word}
             onChange={(e) => onChangeWord(e.target.value)}
             className="w-full"
