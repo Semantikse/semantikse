@@ -138,8 +138,9 @@ export default function Home() {
 
       setCurrentWord("");
 
-      // TODO handle stars
-      setStarsCount((prev) => prev + 50);
+      // Étoiles proportionnelles au score : 0, 10, 20, 30, 40, ou 50
+      const earnedStars = Math.round((score.percentage / 100) * 5) * 10;
+      setStarsCount((prev) => prev + earnedStars);
     } catch (e) {
       console.error("Erreur lors de la soumission du mot:", e);
       // Gérer l'erreur (par exemple si le mot n'est pas dans le dictionnaire)
