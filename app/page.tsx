@@ -19,6 +19,7 @@ import {
 } from "@/app/constants";
 import useCemantixApi from "@/app/hooks/useCemantixApi";
 import useCountdownToNextWord from "@/app/hooks/useCountdownToNextWord";
+import useHints from "@/app/hooks/useHints";
 import useLocalStorage from "@/app/hooks/useLocalStorage";
 import { useEffect, useState } from "react";
 
@@ -33,7 +34,7 @@ export default function Home() {
   const [currentWord, setCurrentWord] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isHintMarketOpen, setIsHintMarketOpen] = useState(false);
-  const [scrapedHints, setScrapedHints] = useState<string[]>([]);
+  const scrapedHints = useHints();
 
   const [progress, setProgress, progressLoaded] = useLocalStorage<Progress>(
     LOCAL_STORAGE_KEY,
@@ -55,18 +56,7 @@ export default function Home() {
     firstWordTs: firstWordTimestamp,
     wonStats: winStats,
   } = progress;
-  const { flammeCount, lastWinDate, stars: starsCount } = streak;
-
-  useEffect(() => {
-    fetch("/api/hints")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.hints) {
-          setScrapedHints(data.hints);
-        }
-      })
-      .catch((err) => console.error("Erreur récupération indices:", err));
-  }, []);
+  const { flammeCount, stars: starsCount } = streak;
 
   // Reset de la progression quand on change de jour
   useEffect(() => {
