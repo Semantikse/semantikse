@@ -153,7 +153,9 @@ export default function Home() {
     }
   };
 
-  const canBuyHint = starsCount >= 300;
+  const HINTS_COSTS = [300, 400, 500, 600, 700, 800, 800, 800];
+  const nextHintCost = HINTS_COSTS[unlockedHints] ?? Infinity;
+  const canBuyHint = starsCount >= nextHintCost;
 
   return (
     <div className="container mx-auto px-4 h-dvh flex flex-col">
