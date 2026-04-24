@@ -5,13 +5,18 @@ import { SecondaryButton } from "@/app/components/atoms/SecondaryButton";
 import { TertiaryButton } from "@/app/components/atoms/TertiaryButton";
 import { TextInput } from "@/app/components/atoms/TextInput";
 import { cn } from "@/app/utils/cn";
-import { ArrowRightIcon, StarIcon } from "@heroicons/react/20/solid";
+import {
+  ArrowPathIcon,
+  ArrowRightIcon,
+  StarIcon,
+} from "@heroicons/react/20/solid";
 import { HTMLAttributes, forwardRef, type SubmitEventHandler } from "react";
 
 interface BottomBarProps extends HTMLAttributes<HTMLDivElement> {
   word: string;
   starsCount: number;
   canBuyHint: boolean;
+  isSubmitting?: boolean;
   onChangeWord: (word: string) => void;
   onSubmitWord: VoidFunction;
   onOpenHintMarket: VoidFunction;
@@ -25,6 +30,7 @@ export const BottomBar = forwardRef<HTMLDivElement, BottomBarProps>(
       className,
       starsCount,
       canBuyHint,
+      isSubmitting = false,
       onSubmitWord,
       onChangeWord,
       onOpenHintMarket,
@@ -35,6 +41,7 @@ export const BottomBar = forwardRef<HTMLDivElement, BottomBarProps>(
   ) => {
     const handleSubmitForm: SubmitEventHandler<HTMLFormElement> = (e) => {
       e.preventDefault();
+      if (isSubmitting) return;
       onSubmitWord();
     };
 
@@ -78,11 +85,16 @@ export const BottomBar = forwardRef<HTMLDivElement, BottomBarProps>(
             autoFocus
             value={word}
             onChange={(e) => onChangeWord(e.target.value)}
+            disabled={isSubmitting}
             className="w-full"
             placeholder="Text"
           />
-          <PrimaryButton>
-            <ArrowRightIcon className="size-6" />
+          <PrimaryButton disabled={isSubmitting} aria-busy={isSubmitting}>
+            {isSubmitting ? (
+              <ArrowPathIcon className="size-6 animate-spin" />
+            ) : (
+              <ArrowRightIcon className="size-6" />
+            )}
           </PrimaryButton>
         </form>
       </div>

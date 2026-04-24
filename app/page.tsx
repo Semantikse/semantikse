@@ -34,6 +34,7 @@ export default function Home() {
   const [currentWord, setCurrentWord] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isHintMarketOpen, setIsHintMarketOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const scrapedHints = useHints();
 
   const [progress, setProgress, progressLoaded] = useLocalStorage<Progress>(
@@ -86,8 +87,9 @@ export default function Home() {
   }, [streakLoaded]);
 
   const onSubmitWord = async () => {
-    if (!currentWord.trim()) return;
+    if (!currentWord.trim() || isSubmitting) return;
 
+    setIsSubmitting(true);
     try {
       const score = await submitWord(currentWord);
 
@@ -172,6 +174,8 @@ export default function Home() {
       setCurrentWord("");
     } catch (e) {
       console.error("Erreur lors de la soumission du mot:", e);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -246,6 +250,7 @@ export default function Home() {
       <BottomBar
         className="px-4"
         word={currentWord}
+        isSubmitting={isSubmitting}
         onSubmitWord={onSubmitWord}
         onChangeWord={(word) => {
           setCurrentWord(word);
