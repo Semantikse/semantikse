@@ -8,8 +8,9 @@ export const ScoreResponseSchema = z.object({
 });
 
 export const WordScoreSchema = z.object({
-  degree: z.number(),
-  percentage: z.number(),
+  degree: z.number().optional(),
+  percentage: z.number().optional(),
+  error: z.string().optional(),
 });
 
 export type WordScore = z.infer<typeof WordScoreSchema>;
@@ -84,8 +85,13 @@ export class CemantixApi {
 
   public static async submitWord(word: string): Promise<WordScore> {
     const response = await this.sendRequest(word);
+    
+    if (response.error || response.s === undefined) {
+      return { error: response.error || "Mot non reconnu" };
+    }
+    
     return {
-      degree: (response.s ?? 0) * 100,
+      degree: response.s * 100,
       percentage: (response.p ?? 0) / 10,
     };
   }

@@ -22,6 +22,7 @@ export default function Home() {
   const { winnerCount, submitWord } = useCemantixApi();
 
   const [currentWord, setCurrentWord] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [testedWords, setTestedWords] = useState<WordEntry[]>([]);
   const [starsCount, setStarsCount] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -119,6 +120,14 @@ export default function Home() {
     try {
       const score = await submitWord(currentWord);
 
+      if (score.error || score.degree === undefined || score.percentage === undefined) {
+        // Le mot n'existe pas ou n'est pas reconnu par cemantix
+        setErrorMessage("Ce mot n'est pas reconnu");
+        return;
+      }
+      
+      setErrorMessage("");
+
       setTestedWords((prev) => {
         // Éviter d'ajouter des doublons
         if (
@@ -130,8 +139,8 @@ export default function Home() {
           ...prev,
           {
             label: currentWord,
-            temp: score.degree,
-            percentage: score.percentage,
+            temp: score.degree as number,
+            percentage: score.percentage as number,
           },
         ];
       });
@@ -210,10 +219,14 @@ export default function Home() {
       <BottomBar
         word={currentWord}
         onSubmitWord={onSubmitWord}
-        onChangeWord={(word) => setCurrentWord(word)}
+        onChangeWord={(word) => {
+          setCurrentWord(word);
+          setErrorMessage("");
+        }}
         starsCount={starsCount}
         canBuyHint={canBuyHint}
         onOpenHintMarket={() => setIsHintMarketOpen(true)}
+        errorMessage={errorMessage}
       />
     </div>
   );

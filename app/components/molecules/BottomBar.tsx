@@ -15,6 +15,7 @@ interface BottomBarProps extends HTMLAttributes<HTMLDivElement> {
   onChangeWord: (word: string) => void;
   onSubmitWord: VoidFunction;
   onOpenHintMarket: VoidFunction;
+  errorMessage?: string;
   className?: string;
 }
 export const BottomBar = forwardRef<HTMLDivElement, BottomBarProps>(
@@ -27,6 +28,7 @@ export const BottomBar = forwardRef<HTMLDivElement, BottomBarProps>(
       onSubmitWord,
       onChangeWord,
       onOpenHintMarket,
+      errorMessage,
       ...props
     },
     ref,
@@ -66,6 +68,11 @@ export const BottomBar = forwardRef<HTMLDivElement, BottomBarProps>(
             </SecondaryButton>
           )}
         </div>
+        {errorMessage && (
+          <div className="text-red-500 text-sm font-medium px-2 animate-pulse">
+            {errorMessage}
+          </div>
+        )}
         <form onSubmit={handleSubmitForm} className="flex gap-1 items-center">
           <TextInput
             value={word}
