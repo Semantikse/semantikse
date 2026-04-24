@@ -44,7 +44,7 @@ export const WinnerSection = forwardRef<HTMLDivElement, WinnerSectionProps>(
     return (
       <div
         className={cn(
-          "self-stretch pt-14 pb-16 inline-flex flex-col justify-end items-center gap-7 overflow-hidden font-newake text-red-950 text-base font-normal uppercase leading-6 tracking-wide",
+          "pt-14 pb-16 inline-flex flex-col justify-end items-center gap-7 overflow-hidden font-newake text-red-950 text-base font-normal uppercase leading-6 tracking-wide",
           className,
         )}
         {...props}

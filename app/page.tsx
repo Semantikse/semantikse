@@ -3,6 +3,7 @@ import { BottomBar } from "@/app/components/molecules/BottomBar";
 import { Header } from "@/app/components/molecules/Header";
 import { HeroSection } from "@/app/components/molecules/HeroSection";
 import { HintMarket } from "@/app/components/molecules/HintMarket";
+import { WinnerSection } from "@/app/components/molecules/WinnerSection";
 import Words, { WordEntry } from "@/app/components/molecules/Words";
 import useCemantixApi from "@/app/hooks/useCemantixApi";
 import useCountdownToNextWord from "@/app/hooks/useCountdownToNextWord";
@@ -184,12 +185,13 @@ export default function Home() {
           />
         ) : (
           <>
-            {/* <WinnerSection
+            <WinnerSection
+              className="shrink-0"
               usedHintCount={{ value: 3, totalAvailable: 8, newRecord: true }}
               usedWordCount={{ value: 20, newRecord: true }}
               place={{ value: 29349, newRecord: true }}
               duration={{ value: 1303, newRecord: true }}
-            /> */}
+            />
 
             <Words words={testedWords} />
           </>
