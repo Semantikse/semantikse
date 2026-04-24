@@ -2,11 +2,11 @@
 import { BottomBar } from "@/app/components/molecules/BottomBar";
 import { Header } from "@/app/components/molecules/Header";
 import { HeroSection } from "@/app/components/molecules/HeroSection";
+import { HintMarket } from "@/app/components/molecules/HintMarket";
+import Words, { WordEntry } from "@/app/components/molecules/Words";
 import useCemantixApi from "@/app/hooks/useCemantixApi";
 import useCountdownToNextWord from "@/app/hooks/useCountdownToNextWord";
-import { useState, useEffect } from "react";
-import Words, { WordEntry } from "@/app/components/molecules/Words";
-import { HintMarket } from "@/app/components/molecules/HintMarket";
+import { useEffect, useState } from "react";
 
 const LOCAL_STORAGE_KEY = "cemantix_progress";
 const LOCAL_STORAGE_STREAK_KEY = "cemantix_streak";
@@ -62,15 +62,15 @@ export default function Home() {
       try {
         const { flammeCount, lastWinDate, stars } = JSON.parse(savedStreak);
         if (stars !== undefined) setStarsCount(stars);
-        
+
         if (lastWinDate) {
           const today = getCurrentDateString();
           const todayDate = new Date(today);
           const lastWin = new Date(lastWinDate);
-          
+
           const diffTime = Math.abs(todayDate.getTime() - lastWin.getTime());
-          const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24)); 
-          
+          const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
           if (diffDays > 1) {
             setFlammeCount(0); // Streak broken
           } else {
@@ -88,21 +88,27 @@ export default function Home() {
 
   useEffect(() => {
     if (isLoaded) {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({
-        date: getCurrentDateString(),
-        words: testedWords,
-        hints: unlockedHints
-      }));
+      localStorage.setItem(
+        LOCAL_STORAGE_KEY,
+        JSON.stringify({
+          date: getCurrentDateString(),
+          words: testedWords,
+          hints: unlockedHints,
+        }),
+      );
     }
   }, [testedWords, unlockedHints, isLoaded]);
 
   useEffect(() => {
     if (isLoaded) {
-      localStorage.setItem(LOCAL_STORAGE_STREAK_KEY, JSON.stringify({
-        flammeCount,
-        lastWinDate,
-        stars: starsCount
-      }));
+      localStorage.setItem(
+        LOCAL_STORAGE_STREAK_KEY,
+        JSON.stringify({
+          flammeCount,
+          lastWinDate,
+          stars: starsCount,
+        }),
+      );
     }
   }, [flammeCount, lastWinDate, starsCount, isLoaded]);
 
@@ -111,10 +117,12 @@ export default function Home() {
 
     try {
       const score = await submitWord(currentWord);
-      
+
       setTestedWords((prev) => {
         // Éviter d'ajouter des doublons
-        if (prev.some(w => w.label.toLowerCase() === currentWord.toLowerCase())) {
+        if (
+          prev.some((w) => w.label.toLowerCase() === currentWord.toLowerCase())
+        ) {
           return prev;
         }
         return [
@@ -149,8 +157,8 @@ export default function Home() {
 
   const onBuyHint = (cost: number) => {
     if (starsCount >= cost) {
-      setStarsCount(prev => prev - cost);
-      setUnlockedHints(prev => prev + 1);
+      setStarsCount((prev) => prev - cost);
+      setUnlockedHints((prev) => prev + 1);
     }
   };
 
@@ -168,17 +176,23 @@ export default function Home() {
 
       <div className="flex-1 overflow-y-auto flex flex-col gap-8 pb-4">
         {testedWords.length === 0 ? (
-          <div className="flex-1 flex flex-col justify-center">
-            <HeroSection
-              flammeCount={flammeCount}
-              remainingSeconds={remainingSeconds}
-              winnerCount={winnerCount}
-            />
-          </div>
+          <HeroSection
+            className="my-auto"
+            flammeCount={flammeCount}
+            remainingSeconds={remainingSeconds}
+            winnerCount={winnerCount}
+          />
         ) : (
-          <div className="mt-4">
+          <>
+            {/* <WinnerSection
+              usedHintCount={{ value: 3, totalAvailable: 8, newRecord: true }}
+              usedWordCount={{ value: 20, newRecord: true }}
+              place={{ value: 29349, newRecord: true }}
+              duration={{ value: 1303, newRecord: true }}
+            /> */}
+
             <Words words={testedWords} />
-          </div>
+          </>
         )}
       </div>
 
