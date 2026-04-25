@@ -98,7 +98,7 @@ export default function Words({ words }: WordsProps) {
   }
 
   const lastWord = words[words.length - 1];
-  const sortedTopWords = words.slice(0, -1).sort((a, b) => b.temp - a.temp);
+  const sortedTopWords = [...words].sort((a, b) => b.temp - a.temp);
 
   const earnedStars = Math.round((lastWord.percentage / 100) * 5) * 10;
 
