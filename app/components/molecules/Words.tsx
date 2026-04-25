@@ -6,10 +6,11 @@ interface WordsProps {
 }
 
 const getWordMetas = (temp: number) => {
-  if (temp >= 60) return { emoji: "😱", category: "< 100°", color: "#EE4620" };
-  if (temp >= 40) return { emoji: "🔥", category: "< 60°", color: "#EC8914" };
-  if (temp >= 30) return { emoji: "🥵", category: "< 39°", color: "#EC8914" };
-  if (temp >= 23) return { emoji: "😎", category: "< 30°", color: "#f97316" };
+  if (temp >= 100) return { emoji: "🥳", category: "100°", color: "#EE4620"};
+  if (temp >= 49.28) return { emoji: "😱", category: "< 100°", color: "#EE4620" };
+  if (temp >= 43.30) return { emoji: "🔥", category: "< 60°", color: "#EC8914" };
+  if (temp >= 36.36) return { emoji: "🥵", category: "< 39°", color: "#EC8914" };
+  if (temp >= 26.77) return { emoji: "😎", category: "< 30°", color: "#f97316" };
   if (temp >= 0) return { emoji: "🥶", category: "< 23°", color: "#f97316" };
   return { emoji: "🧊", category: "< 0°", color: "#f97316" };
 };
