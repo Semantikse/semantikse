@@ -187,7 +187,7 @@ export default function Home() {
     }
   };
 
-  const nextHintCost = HINTS_CONFIG[unlockedHints].cost ?? Infinity;
+  const nextHintCost = HINTS_CONFIG[unlockedHints]?.cost ?? Infinity;
   const canBuyHint = starsCount >= nextHintCost;
 
   return (
