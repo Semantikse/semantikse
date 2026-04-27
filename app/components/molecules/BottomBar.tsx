@@ -100,7 +100,6 @@ export const BottomBar = forwardRef<HTMLDivElement, BottomBarProps>(
             autoFocus
             value={word}
             onChange={(e) => onChangeWord(e.target.value)}
-            disabled={isSubmitting}
             className="w-full"
             placeholder="Text"
           />
