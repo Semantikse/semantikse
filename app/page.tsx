@@ -163,12 +163,12 @@ export default function Home() {
 
         setStreak((s) => ({
           ...s,
-          stars: s.stars + earnedStars,
+          ...(alreadyTested ? {} : { stars: s.stars + earnedStars }),
           ...(s.lastWinDate !== today
             ? { flammeCount: s.flammeCount + 1, lastWinDate: today }
             : {}),
         }));
-      } else {
+      } else if (!alreadyTested) {
         setStreak((s) => ({ ...s, stars: s.stars + earnedStars }));
       }
 
