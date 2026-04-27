@@ -44,7 +44,7 @@ export const HintMarket = ({
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto flex flex-col gap-4">
+        <div className="grow overflow-y-auto flex flex-col gap-4">
           {HINTS_CONFIG.map((hint, idx) => {
             const isUnlocked = idx < unlockedHints;
             const isNext = idx === unlockedHints;
@@ -55,7 +55,7 @@ export const HintMarket = ({
               return (
                 <div
                   key={hint.id}
-                  className="w-full min-h-10 flex items-center gap-6 px-4"
+                  className="w-full flex items-center gap-6 px-4"
                 >
                   <LightBulbIcon className="size-5 shrink-0 text-yellow-400" />
                   <div className="flex-1 text-red-900 text-base font-normal font-newake tracking-wide leading-tight">
