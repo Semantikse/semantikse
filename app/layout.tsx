@@ -34,7 +34,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Semantikse" />
         <link rel="manifest" href="/site.webmanifest" />
       </Head>
-      <body className="min-h-full bg-orange-50 flex flex-col font-geist">
+      <body className="min-h-dvh bg-orange-50 flex flex-col font-geist">
         {children}
       </body>
     </html>
