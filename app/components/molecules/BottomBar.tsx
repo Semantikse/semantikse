@@ -10,7 +10,13 @@ import {
   ArrowRightIcon,
   StarIcon,
 } from "@heroicons/react/20/solid";
-import { HTMLAttributes, forwardRef, type SubmitEventHandler } from "react";
+import {
+  HTMLAttributes,
+  forwardRef,
+  useEffect,
+  useRef,
+  type SubmitEventHandler,
+} from "react";
 
 interface BottomBarProps extends HTMLAttributes<HTMLDivElement> {
   word: string;
@@ -39,11 +45,19 @@ export const BottomBar = forwardRef<HTMLDivElement, BottomBarProps>(
     },
     ref,
   ) => {
+    const inputRef = useRef<HTMLInputElement>(null);
+
     const handleSubmitForm: SubmitEventHandler<HTMLFormElement> = (e) => {
       e.preventDefault();
       if (isSubmitting) return;
       onSubmitWord();
     };
+
+    useEffect(() => {
+      if (!isSubmitting) {
+        inputRef.current?.focus();
+      }
+    }, [isSubmitting]);
 
     return (
       <div
@@ -82,6 +96,7 @@ export const BottomBar = forwardRef<HTMLDivElement, BottomBarProps>(
         )}
         <form onSubmit={handleSubmitForm} className="flex gap-1 items-center">
           <TextInput
+            ref={inputRef}
             autoFocus
             value={word}
             onChange={(e) => onChangeWord(e.target.value)}
