@@ -191,7 +191,7 @@ export default function Home() {
   const canBuyHint = starsCount >= nextHintCost;
 
   return (
-    <div className="container mx-auto h-dvh flex flex-col">
+    <div className="container mx-auto h-full overflow-y-auto flex flex-col">
       <Header
         className="px-4"
         flammeCount={flammeCount}
@@ -199,7 +199,7 @@ export default function Home() {
         winnerCount={winnerCount}
       />
 
-      <div className="flex-1 overflow-y-auto flex flex-col gap-8 px-4 pb-24">
+      <div className="grow flex flex-col gap-8 px-4 pb-24">
         {testedWords.length === 0 ? (
           <HeroSection
             className="my-auto"
@@ -248,9 +248,9 @@ export default function Home() {
         scrapedHints={scrapedHints}
       />
 
-      <div className="absolute bottom-0 left-0 w-full">
+      
       <BottomBar
-        className="container mx-auto px-4"
+        className="sticky bottom-0 px-4"
         word={currentWord}
         isSubmitting={isSubmitting}
         onSubmitWord={onSubmitWord}
@@ -263,7 +263,6 @@ export default function Home() {
         onOpenHintMarket={() => setIsHintMarketOpen(true)}
         errorMessage={errorMessage}
       />
-      </div>
     </div>
   );
 }
